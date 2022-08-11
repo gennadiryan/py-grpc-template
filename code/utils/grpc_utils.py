@@ -1,3 +1,4 @@
+import os
 from functools import wraps
 
 from concurrent import futures
@@ -86,3 +87,25 @@ def ssl_credentials(root_certs=None, key_cert_pairs=None, server=False, client_a
         private_key=key_cert_pairs[0][0],
         certificate_chain=key_cert_pairs[0][1],
     )
+
+
+def get_ssl_credentials():
+    is_server = os.getenv('HOST') == '[::]'
+
+    common = os.getenv('COMMON_NAME')
+    ca = os.getenv('CA_NAME')
+    auth = len(os.getenv('AUTH')) > 0
+    client_auth = len(os.getenv('CLIENT_AUTH')) > 0
+
+    credentials = None
+    if auth:
+        root_certs = f'/app/certs/{ca}.pem' if (is_server and client_auth) or ((not is_server) and auth) else None
+        key_cert_pairs = [(f'/app/private/{common}.key', f'/app/certs/{common}.pem')] if (is_server and auth) or ((not is_server) and client_auth) else None
+        credentials = ssl_credentials(
+            root_certs=root_certs,
+            key_cert_pairs=key_cert_pairs,
+            server=is_server,
+            client_auth=client_auth,
+        )
+
+    return credentials

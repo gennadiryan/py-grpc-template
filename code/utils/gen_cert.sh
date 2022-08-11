@@ -10,4 +10,11 @@ gen_signed_cert () {
 }
 
 
-gen_signed_cert ${1} ${2} ${3} ${4} ${5} ${6}
+if [ $# -gt 0 ];
+then
+  if [ ! -f ${2} ];
+  then
+    exit 1;
+  fi;
+  gen_signed_cert ${@};
+fi;

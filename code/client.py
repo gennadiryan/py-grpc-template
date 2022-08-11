@@ -1,8 +1,10 @@
+import os
+
 import grpc
 from keyvaluestore_pb2 import Item, Key, Value, MaybeValue
 from keyvaluestore_pb2_grpc import KeyValueStoreStub
 
-from utils.grpc_utils import get_channel, ssl_credentials
+from utils.grpc_utils import get_channel, get_ssl_credentials
 
 
 class Client:
@@ -29,20 +31,15 @@ class Client:
 
 
 if __name__ == '__main__':
-    # creds = None # insecure
-    #
-    # creds = ssl_credentials(
-    #     root_certs='certs/ca.pem',
-    #     client_auth=False,
-    # ) # one-way secure
+    host = os.getenv('HOST')
+    port = os.getenv('PORT')
+    creds = get_ssl_credentials()
 
-    creds = ssl_credentials(
-        root_certs='certs/ca.pem',
-        key_cert_pairs=[('private/client.key', 'certs/client.pem')],
-        client_auth=True,
-    ) # two-way secure
+    assert host != '[::]'
+    assert port == '50051'
+    assert creds is not None
 
-    with get_channel('server', 50051, creds) as channel:
+    with get_channel(host, port, creds) as channel:
         client = Client(channel)
         print(client.get('a'))
         print(client.put('x', '65'))

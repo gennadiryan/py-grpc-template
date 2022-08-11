@@ -1,8 +1,10 @@
+import os
+
 import grpc
 from keyvaluestore_pb2 import Item, Key, Value, MaybeValue
 from keyvaluestore_pb2_grpc import KeyValueStoreServicer as _KeyValueStoreServicer, add_KeyValueStoreServicer_to_server
 
-from utils.grpc_utils import add_servicer_to_server, serve, ssl_credentials
+from utils.grpc_utils import add_servicer_to_server, serve, get_ssl_credentials
 from resource import KeyValueStorage
 
 
@@ -43,19 +45,12 @@ class KeyValueStoreServicer(_KeyValueStoreServicer):
 
 
 if __name__ == '__main__':
-    # creds = None # insecure
-    #
-    # creds = ssl_credentials(
-    #     key_cert_pairs=[('private/server.key', 'certs/server.pem')],
-    #     server=True,
-    #     client_auth=False,
-    # ) # one-way secure
+    host = os.getenv('HOST')
+    port = os.getenv('PORT')
+    creds = get_ssl_credentials()
 
-    creds = ssl_credentials(
-        root_certs='certs/ca.pem',
-        key_cert_pairs=[('private/server.key', 'certs/server.pem')],
-        server=True,
-        client_auth=True,
-    ) # two-way secure
+    assert host == '[::]'
+    assert port == '50051'
+    assert creds is not None
 
-    serve(KeyValueStoreServicer('storage.txt'), 50051, creds)
+    serve(KeyValueStoreServicer('storage.txt'), port, creds)

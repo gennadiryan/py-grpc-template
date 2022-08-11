@@ -4,7 +4,7 @@ class KeyValueStorage(dict):
     def __init__(self, path):
         self._path = os.path.abspath(path)
         if not os.path.isfile(self._path):
-            with open(self._path, 'w'):
+            with open(self._path, 'w') as f:
                 f.write(str())
         assert os.path.isfile(self._path)
 
