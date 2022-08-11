@@ -9,3 +9,10 @@ One-way Auth:
 Two-way Auth:
   docker build . -t grpc-server --secret id=key,src=private/ca.key --build-arg COMMON_NAME=server --build-arg AUTH=true --build-arg CLIENT_AUTH=true
   docker build . -t grpc-client --secret id=key,src=private/ca.key --build-arg COMMON_NAME=client --build-arg HOST_NAME=server --build-arg AUTH=true --build-arg CLIENT_AUTH=true
+
+Network:
+  docker network create grpc-net
+
+Run:
+  docker run -it --rm --network grpc-net --name server grpc-server
+  docker run -it --rm --network grpc-net --name client grpc-client
