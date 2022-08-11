@@ -45,7 +45,7 @@ class KeyValueStoreServicer(_KeyValueStoreServicer):
 
 
 if __name__ == '__main__':
-    host = os.getenv('HOST')
+    host = os.getenv('HOST_NAME')
     port = os.getenv('PORT')
     creds = get_ssl_credentials()
 

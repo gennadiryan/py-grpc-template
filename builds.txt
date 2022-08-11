@@ -1,0 +1,11 @@
+No Auth:
+  docker build . -t grpc-server --secret id=key,src=private/ca.key --build-arg COMMON_NAME=server
+  docker build . -t grpc-client --secret id=key,src=private/ca.key --build-arg COMMON_NAME=client --build-arg HOST_NAME=server
+
+One-way Auth:
+  docker build . -t grpc-server --secret id=key,src=private/ca.key --build-arg COMMON_NAME=server --build-arg AUTH=true
+  docker build . -t grpc-client --secret id=key,src=private/ca.key --build-arg COMMON_NAME=client --build-arg HOST_NAME=server --build-arg AUTH=true
+
+Two-way Auth:
+  docker build . -t grpc-server --secret id=key,src=private/ca.key --build-arg COMMON_NAME=server --build-arg AUTH=true --build-arg CLIENT_AUTH=true
+  docker build . -t grpc-client --secret id=key,src=private/ca.key --build-arg COMMON_NAME=client --build-arg HOST_NAME=server --build-arg AUTH=true --build-arg CLIENT_AUTH=true

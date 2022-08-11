@@ -104,7 +104,7 @@ def get_ssl_credentials():
         credentials = ssl_credentials(
             root_certs=root_certs,
             key_cert_pairs=key_cert_pairs,
-            server=is_server,
+            server=is_host,
             client_auth=client_auth,
         )
 
