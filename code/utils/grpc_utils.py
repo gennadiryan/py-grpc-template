@@ -90,17 +90,17 @@ def ssl_credentials(root_certs=None, key_cert_pairs=None, server=False, client_a
 
 
 def get_ssl_credentials():
-    is_server = os.getenv('HOST') == '[::]'
+    is_host = os.getenv('HOST_NAME') == '[::]'
 
     common = os.getenv('COMMON_NAME')
     ca = os.getenv('CA_NAME')
-    auth = len(os.getenv('AUTH')) > 0
-    client_auth = len(os.getenv('CLIENT_AUTH')) > 0
+    auth = os.getenv('AUTH') == 'true'
+    client_auth = os.getenv('CLIENT_AUTH') == 'true'
 
     credentials = None
     if auth:
-        root_certs = f'/app/certs/{ca}.pem' if (is_server and client_auth) or ((not is_server) and auth) else None
-        key_cert_pairs = [(f'/app/private/{common}.key', f'/app/certs/{common}.pem')] if (is_server and auth) or ((not is_server) and client_auth) else None
+        root_certs = f'/app/certs/{ca}.pem' if (is_host and client_auth) or ((not is_host) and auth) else None
+        key_cert_pairs = [(f'/app/private/{common}.key', f'/app/certs/{common}.pem')] if (is_host and auth) or ((not is_host) and client_auth) else None
         credentials = ssl_credentials(
             root_certs=root_certs,
             key_cert_pairs=key_cert_pairs,
