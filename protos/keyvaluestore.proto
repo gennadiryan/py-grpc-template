@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+service KeyValueStore {
+  rpc Get(Key) returns (MaybeValue) {}
+
+  rpc Put(Item) returns (MaybeValue) {}
+
+  rpc Del(Key) returns (MaybeValue) {}
+}
+
+message Item {
+  Key k = 1;
+  Value v = 2;
+}
+
+message Key {
+  string k = 1;
+}
+
+message MaybeValue {
+  bool some = 1;
+  Value v = 2;
+}
+
+message Value {
+  string v = 1;
+}
