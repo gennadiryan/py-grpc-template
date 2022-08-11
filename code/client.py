@@ -3,8 +3,9 @@ import os
 import grpc
 from keyvaluestore_pb2 import Item, Key, Value, MaybeValue
 from keyvaluestore_pb2_grpc import KeyValueStoreStub
-
 from utils.grpc_utils import get_channel, get_ssl_credentials
+
+from interact import keyvaluestore_prompt
 
 
 class Client:
@@ -41,9 +42,29 @@ if __name__ == '__main__':
 
     with get_channel(host, port, creds) as channel:
         client = Client(channel)
-        print(client.get('a'))
-        print(client.put('x', '65'))
-        print(client.delete('x'))
-        print(client.put('b', 'bye_there'))
-        print(client.put('x', 'abc123'))
-        print(client.get('x'))
+
+        prompt_gen = keyvaluestore_prompt('>>> ')
+        result = next(prompt_gen)
+        while result is not None:
+            command, key, value = result
+
+            if command == 'get':
+                resp = client.get(key)
+            elif command == 'put':
+                resp = client.put(key, value)
+            elif command == 'delete':
+                resp = client.delete(key)
+            else:
+                print(f'Invalid command "{command}"')
+                break
+
+            print(f'"{resp}"' if resp is not None else resp)
+            result = next(prompt_gen)
+
+
+        # print(client.get('a'))
+        # print(client.put('x', '65'))
+        # print(client.delete('x'))
+        # print(client.put('b', 'bye_there'))
+        # print(client.put('x', 'abc123'))
+        # print(client.get('x'))
